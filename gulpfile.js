@@ -41,7 +41,7 @@ gulp.task('browserify-client', ['lint-client'], function() {
 		.pipe(browserified)
 		.pipe(rename('todoist-backbone.js'))
 		.pipe(gulp.dest('build'))
-		.pipe(gulp.dest('public/javascripts'));
+		.pipe(gulp.dest('public/js'));
 });
 
 gulp.task('browserify-test', ['lint-test'], function() {
@@ -75,21 +75,21 @@ gulp.task('styles', function() {
 		.pipe(sourcemaps.write())
 		.pipe(rename('todoist-backbone.css'))
 		.pipe(gulp.dest('build'))
-		.pipe(gulp.dest('public/stylesheets'));
+		.pipe(gulp.dest('public/css'));
 });
 
 gulp.task('minify', ['styles'], function() {
 	return gulp.src('build/todoist-backbone.css')
 		.pipe(minifyCSS())
 		.pipe(rename('todoist-backbone.min.css'))
-		.pipe(gulp.dest('public/stylesheets'));
+		.pipe(gulp.dest('public/css'));
 });
 
 gulp.task('uglify', ['browserify-client'], function() {
   return gulp.src('build/todoist-backbone.js')
     .pipe(uglify())
     .pipe(rename('todoist-backbone.min.js'))
-    .pipe(gulp.dest('public/javascripts'));
+    .pipe(gulp.dest('public/js'));
 });
 
 gulp.task('build', ['uglify', 'minify']);
