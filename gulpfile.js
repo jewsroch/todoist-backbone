@@ -20,7 +20,7 @@ var jshint = require('gulp-jshint');
 var mochaPhantomjs = require('gulp-mocha-phantomjs');
 
 gulp.task('lint-client', function() {
-	return gulp.src('./client/**/*.js')
+	return gulp.src('./src/**/*.js')
 		.pipe(jshint())
 		.pipe(jshint.reporter('default'));
 });
@@ -37,7 +37,7 @@ gulp.task('browserify-client', ['lint-client'], function() {
 		return b.bundle();
 	});
 
-	return gulp.src('client/index.js')
+	return gulp.src('src/index.js')
 		.pipe(browserified)
 		.pipe(rename('todoist-backbone.js'))
 		.pipe(gulp.dest('build'))
@@ -50,25 +50,25 @@ gulp.task('browserify-test', ['lint-test'], function() {
 		return b.bundle();
 	});
 
-  return gulp.src('test/client/index.js')
+  return gulp.src('test/src/index.js')
     .pipe(browserified)
-    .pipe(rename('client-test.js'))
+    .pipe(rename('src-test.js'))
     .pipe(gulp.dest('build'));
 });
 
 gulp.task('watch', function() {
-	gulp.watch('client/**/*.styl', ['styles']);
-	gulp.watch('client/**/*.js', ['browserify-client', 'test']);
-	gulp.watch('test/client/**/*.js', ['test']);
+	gulp.watch('src/**/*.styl', ['styles']);
+	gulp.watch('src/**/*.js', ['browserify-client', 'test']);
+	gulp.watch('test/src/**/*.js', ['test']);
 });
 
 gulp.task('test', ['lint-test', 'browserify-test'], function() {
-	return gulp.src('test/client/index.html')
+	return gulp.src('test/src/index.html')
 		.pipe(mochaPhantomjs());
 });
 
 gulp.task('styles', function() {
-	return gulp.src('client/stylus/index.styl')
+	return gulp.src('src/stylus/index.styl')
 		.pipe(sourcemaps.init())
 		.pipe(stylus())
 		.pipe(prefix({ cascade: true }))
