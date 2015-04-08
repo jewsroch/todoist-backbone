@@ -1,16 +1,20 @@
 // Gulp Dependencies
-var gulp = require('gulp');
-var rename = require('gulp-rename');
+var gulp = require('gulp'),
+    rename = require('gulp-rename');
+
+// Bower
+var bower = require('gulp-bower');
 
 // Build Dependencies
-var transform = require('vinyl-transform');
-var browserify = require('browserify');
-var uglify = require('gulp-uglify');
+var transform = require('vinyl-transform'),
+    browserify = require('browserify'),
+    uglify = require('gulp-uglify');
 
 // Style Dependencies
-var less = require('gulp-less');
-var prefix = require('gulp-autoprefixer');
-var minifyCSS = require('gulp-minify-css');
+var sass = require('gulp-ruby-sass'),
+    notify = require('gulp-notify'),
+    prefix = require('gulp-autoprefixer'),
+    minifyCSS = require('gulp-minify-css');
 
 // Development Dependencies
 var jshint = require('gulp-jshint');
@@ -18,7 +22,16 @@ var jshint = require('gulp-jshint');
 // Test Dependencies
 var mochaPhantomjs = require('gulp-mocha-phantomjs');
 
+var config = {
+  sassPath: './client/sass',
+  bowerDir: './bower_components'
+};
 
+// Bower
+gulp.task('bower', function() {
+  return bower()
+    .pipe(gulp.dest(config.bowerDir));
+});
 
 // Lint
 gulp.task('lint-client', function() {
@@ -37,10 +50,10 @@ gulp.task('lint-test', function() {
 
 // Browserify
 gulp.task('browserify-client', ['lint-client'], function() {
-	var browserified = transform(function(filename) {
-		var b = browserify({entries: filename, debug: true});
-		return b.bundle();
-	});
+  var browserified = transform(function(filename) {
+    var b = browserify({entries: filename, debug: true});
+    return b.bundle();
+  });
 
   return gulp.src('client/index.js')
     .pipe(browserified)
@@ -51,10 +64,10 @@ gulp.task('browserify-client', ['lint-client'], function() {
 
 
 gulp.task('browserify-test', ['lint-test'], function() {
-	var browserified = transform(function(filename) {
-		var b = browserify({entries: filename, debug: true});
-		return b.bundle();
-	});
+  var browserified = transform(function(filename) {
+    var b = browserify({entries: filename, debug: true});
+    return b.bundle();
+  });
 
   return gulp.src('test/client/index.js')
     .pipe(browserified)
@@ -63,26 +76,39 @@ gulp.task('browserify-test', ['lint-test'], function() {
 });
 
 
+// Icons
+gulp.task('icons', function() {
+  return gulp.src(config.bowerDir + '/fontawesome/fonts/**.*')
+    .pipe(gulp.dest('./public/fonts'));
+});
+
+
 
 // Styles
 
 gulp.task('styles', function() {
-  return gulp.src('client/less/index.less')
-    .pipe(less())
-    .pipe(prefix({ cascade: true }))
-    .pipe(rename('main.css'))
+  return gulp.src('./client/sass/index.scss')
+    .pipe(sass({
+      style: 'expanded',
+      loadPath: [
+        './client/sass',
+        config.bowerDir + '/bootstrap-sass-official/assets/stylesheets',
+        config.bowerDir + '/fontawesome/scss'
+      ]
+    }).on('error', notify.onError( function(error) {
+      return "Error:" + error.message;
+    })))
     .pipe(gulp.dest('build'))
     .pipe(gulp.dest('public/stylesheets'));
 });
 
 
-
 // Build
 
 gulp.task('minify', ['styles'], function() {
-  return gulp.src('build/main.css')
+  return gulp.src('build/index.css')
     .pipe(minifyCSS())
-    .pipe(rename('main.min.css'))
+    .pipe(rename('index.min.css'))
     .pipe(gulp.dest('public/stylesheets'));
 });
 
@@ -105,7 +131,7 @@ gulp.task('test', ['lint-test', 'browserify-test'], function() {
 gulp.task('watch', function() {
   gulp.watch('client/**/*.js', ['browserify-client', 'test']);
   gulp.watch('test/client/**/*.js', ['test']);
-  gulp.watch('client/**/*.less', ['styles']);
+  gulp.watch('client/**/*.scss', ['styles']);
 });
 
 
@@ -113,4 +139,4 @@ gulp.task('watch', function() {
 // Tasks
 
 gulp.task('build', ['uglify', 'minify']);
-gulp.task('default', ['test', 'build', 'watch']);
+gulp.task('default', ['icons', 'test', 'build', 'watch']);

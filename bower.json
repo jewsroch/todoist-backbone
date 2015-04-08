@@ -1,0 +1,21 @@
+{
+  "name": "todoist-backbone",
+  "version": "0.0.0",
+  "homepage": "https://github.com/jewsroch/todoist-backbone",
+  "authors": [
+    "Chad Jewsbury <chadjewsbury@gmail.com>"
+  ],
+  "description": "Todoist Clone",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass-official": "~3.3.4",
+    "fontawesome": "~4.3.0"
+  }
+}
