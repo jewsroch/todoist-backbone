@@ -8,6 +8,28 @@
     <link rel="stylesheet" href="stylesheets/index.css">
   </head>
   <body>
+    <div class="container">
+      <div class="row">
+        <div class="col md-12">
+          <div class="page-header">
+            <h1>Todoist <small>Redux</small></h1>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col md-4" id="projects"></div>
+        <div class="col md-4" id="tasks"></div>
+        <div class="col md-4" id="task_detail"></div>
+      </div>
+    </div>
+    <!-- Template of the Projects View -->
+    <script type="text/template" id="projectsTemplate">
+        <% _.each(projects, function (project) { %>
+        <div class="project">
+            <p>Project: <%= project.name %></p>
+        </div>
+        <% }); %>
+    </script>
     <script src="javascripts/main.js"></script>
   </body>
 </html>
